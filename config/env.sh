@@ -1,0 +1,4 @@
+export ELASTIC_HOST="127.0.0.1"
+export ELASTIC_PORT="9200"
+export ELASTIC_USER="elastic"
+export ELASTIC_PASS="E1mRBCj8r4AjW7in"

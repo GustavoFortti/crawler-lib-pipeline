@@ -1,0 +1,1 @@
+# ira limpar o dado após ele ser pesquisado uma 1 vez
