@@ -10,13 +10,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 class Selenium():
-    def __init__(self, driver_type, driver_path) -> None:
+    def __init__(self, driver_type: str, driver_path: str) -> None:
         
         if (driver_type == "chrome"):
-            caminho_chromedriver = driver_path
+            chromedriver_path = driver_path
             opcoes = webdriver.ChromeOptions()
             # opcoes.add_argument('--headless')
-            self.driver = webdriver.Chrome(executable_path=caminho_chromedriver, options=opcoes)
+            self.driver = webdriver.Chrome(executable_path=chromedriver_path, options=opcoes)
         elif (driver_type == "firefox"):
             firefox_options = Options()
             # firefox_options.add_argument("--headless")
@@ -57,5 +57,5 @@ class Selenium():
 
         return soup
 
-    def quit(self):
+    def quit(self) -> None:
         self.driver.quit()

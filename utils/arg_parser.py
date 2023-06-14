@@ -1,6 +1,6 @@
 import argparse
 
-def arg_parser():
+def arg_parser() -> dict:
     # Cria um objeto de análise de argumentos
     parser = argparse.ArgumentParser(description='Descrição do script')
 

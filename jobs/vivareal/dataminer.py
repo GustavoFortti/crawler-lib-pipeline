@@ -2,9 +2,7 @@ import time
 import re
 import json
 import requests
-import base64
 import unidecode
-import hashlib
 
 from shared.selenium import Selenium
 from shared.filesystem import FileSystem
@@ -36,7 +34,7 @@ class DataMiner():
 
         self.fs = FileSystem(config_env)
 
-    def minner(self):
+    def minner(self) -> None:
         # configurações do job
         domain = CONFIG_JOB['default']["domain"]
         href = CONFIG_JOB['sets'][0]["href"]
@@ -136,16 +134,13 @@ class DataMiner():
         return property_info
 
     def remove_special_characters(self, string: str) -> str:
-        # Remove acentos
         string = unidecode.unidecode(string)
-        # Remove caracteres especiais
         string = re.sub(r'[^\w\s]', '', string)
-        # Converte para lowercase e substitui espaços por underscores
         string = re.sub(r'\s+', '_', string.lower())
 
         return string
 
-    def save_images(self, property_info: dict, soup: object, download: bool):
+    def save_images(self, property_info: dict, soup: object, download: bool) -> None:
         # Extrair imagens do imovel
         image_urls = []
         carousel_container = soup.find(class_='carousel__container')
@@ -227,12 +222,12 @@ class DataMiner():
         file_extension = url.split(".")[-1]
         return file_extension
 
-def run(config_env: dict):
+def run(config_env: dict) -> None:
     start_time = time.time()
 
     if (config_env["env"] in ["dev", "exp"]):
-        minner = DataMiner(config_env)
-        minner.minner()
+        crawler = DataMiner(config_env)
+        crawler.minner()
     elif (config_env["env"] in ["prd"]):
         prd(config_env)
     else:
@@ -242,7 +237,7 @@ def run(config_env: dict):
     execution_time = end_time - start_time
     print(f"Tempo de execução: {execution_time} segundos")
 
-def prd(config_env: dict):
+def prd(config_env: dict) -> None:
     try:
         DataMiner(config_env)
     except Exception as e:

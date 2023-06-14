@@ -3,7 +3,7 @@ import requests
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
-def get_address_number(address):
+def get_address_number(address: str) -> str:
     patter_number = r"\d+"
     numbers = re.findall(patter_number, address)
 
@@ -18,7 +18,7 @@ def get_address_number(address):
     else:
         return None
 
-def get_info_address(address):
+def get_info_address(address: str) -> tuple[str, str, str, str]:
     number = get_address_number(address)
 
     url = f"https://www.google.com/search?q={address}"

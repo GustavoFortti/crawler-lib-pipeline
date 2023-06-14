@@ -2,13 +2,13 @@ import os
 import json
 
 class FileSystem():
-    def __init__(self, config_env) -> None:
+    def __init__(self, config_env: dict) -> None:
         uri = config_env["uri"]
         name = config_env["job_name"]
 
         self.data_path = f"{uri}/{name}"
 
-    def save(self, data, type_file):
+    def save(self, data: dict, type_file: str) -> None:
         
         choices = {
             "json": self.save_json,
@@ -16,7 +16,7 @@ class FileSystem():
         
         choices.get(type_file)(data)
 
-    def save_json(self, data):
+    def save_json(self, data: dict) -> None:
         data_path = f"{self.data_path}.json"
 
         if not os.path.exists(data_path):
