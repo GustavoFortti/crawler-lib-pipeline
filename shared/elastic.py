@@ -11,13 +11,11 @@ doc = {
 
 class Elastic():
     def __init__(self) -> None:
-
         host = os.getenv('ELASTIC_HOST')
         port = os.getenv('ELASTIC_PORT')
         username = os.getenv('ELASTIC_USER')
         password = os.getenv('ELASTIC_PASS')
 
-        # Criar instância do cliente Elasticsearch
         self.es = Elasticsearch(
             [{'host': host, 'port': int(port), 'scheme': 'https'}],
             basic_auth=(username, password),
@@ -54,9 +52,9 @@ class Elastic():
     def create_document(self, index: str, document: dict) -> dict:
         """
         Cria um documento no Elasticsearch.
-        :param index: O nome do índice.
+        :param index: O nome do indice.
         :param document: O documento a ser criado.
-        :return: O resultado da operação de criação.
+        :return: O resultado da operacao de criacao.
         """
         resultado = self.es.index(index=index, body=document)
         return resultado
@@ -64,10 +62,10 @@ class Elastic():
     def update_document(self, index: str, id: str, updates: dict) -> dict:
         """
         Atualiza um documento existente no Elasticsearch.
-        :param index: O nome do índice.
+        :param index: O nome do indice.
         :param id: O ID do documento.
-        :param updates: As atualizações a serem aplicadas ao documento.
-        :return: O resultado da operação de atualização.
+        :param updates: As atualizacões a serem aplicadas ao documento.
+        :return: O resultado da operacao de atualizacao.
         """
         resultado = self.es.update(index=index, id=id, body={"doc": updates})
         return resultado
@@ -75,9 +73,9 @@ class Elastic():
     def delete_document(self, index: str, id: str) -> dict:
         """
         Exclui um documento existente no Elasticsearch.
-        :param index: O nome do índice.
+        :param index: O nome do indice.
         :param id: O ID do documento.
-        :return: O resultado da operação de exclusão.
+        :return: O resultado da operacao de exclusao.
         """
         resultado = self.es.delete(index=index, id=id)
         return resultado
@@ -85,7 +83,7 @@ class Elastic():
     def check_existing_document(self, index: str, id: str) -> bool:
         """
         Verifica se o documento já existe no Elasticsearch.
-        :param index: O nome do índice.
+        :param index: O nome do indice.
         :param id: O ID do documento.
         :return: True se o documento existir, False caso contrário.
         """

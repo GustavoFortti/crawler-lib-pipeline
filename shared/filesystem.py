@@ -3,13 +3,21 @@ import json
 
 class FileSystem():
     def __init__(self, config_env: dict) -> None:
+        """
+        Inicializa a classe FileSystem.
+        :param config_env: Dicionário contendo as configurações do ambiente.
+        """
         uri = config_env["uri"]
         name = config_env["job_name"]
 
         self.data_path = f"{uri}/{name}"
 
     def save(self, data: dict, type_file: str) -> None:
-        
+        """
+        Salva os dados em um arquivo.
+        :param data: Os dados a serem salvos.
+        :param type_file: O tipo de arquivo (ex: "json").
+        """
         choices = {
             "json": self.save_json,
         }
@@ -17,6 +25,10 @@ class FileSystem():
         choices.get(type_file)(data)
 
     def save_json(self, data: dict) -> None:
+        """
+        Salva os dados em um arquivo JSON.
+        :param data: Os dados a serem salvos.
+        """
         data_path = f"{self.data_path}.json"
 
         if not os.path.exists(data_path):

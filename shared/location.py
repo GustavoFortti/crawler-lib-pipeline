@@ -4,6 +4,11 @@ from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
 def get_address_number(address: str) -> str:
+    """
+    Extrai o número do endereço.
+    :param address: O endereço.
+    :return: O número do endereço.
+    """
     patter_number = r"\d+"
     numbers = re.findall(patter_number, address)
 
@@ -19,6 +24,11 @@ def get_address_number(address: str) -> str:
         return None
 
 def get_info_address(address: str) -> tuple[str, str, str, str]:
+    """
+    Obtém informações de um endereço.
+    :param address: O endereço.
+    :return: Uma tupla contendo latitude, longitude, CEP e número do endereço.
+    """
     number = get_address_number(address)
 
     url = f"https://www.google.com/search?q={address}"

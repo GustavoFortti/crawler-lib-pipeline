@@ -11,7 +11,11 @@ from bs4 import BeautifulSoup
 
 class Selenium():
     def __init__(self, driver_type: str, driver_path: str) -> None:
-        
+        """
+        Inicializa a classe Selenium.
+        :param driver_type: O tipo de driver a ser utilizado ("chrome" ou "firefox").
+        :param driver_path: O caminho para o arquivo do driver.
+        """
         if (driver_type == "chrome"):
             chromedriver_path = driver_path
             opcoes = webdriver.ChromeOptions()
@@ -27,6 +31,11 @@ class Selenium():
         self.logger = logging.getLogger(__name__)
 
     def get_html(self, url: str) -> object:
+        """
+        Obtém o HTML de uma página.
+        :param url: A URL da página.
+        :return: O objeto BeautifulSoup contendo o HTML da página.
+        """
         print(f"GET URL: {url}")
 
         soup = None
@@ -52,10 +61,18 @@ class Selenium():
         return soup
     
     def get_url_soup(self, url: str) -> object:
+        """
+        Obtém o objeto BeautifulSoup de uma página.
+        :param url: A URL da página.
+        :return: O objeto BeautifulSoup contendo o HTML da página.
+        """
         html = self.get_html(url)
         soup = BeautifulSoup(html, 'html.parser')
 
         return soup
 
     def quit(self) -> None:
+        """
+        Encerra a instância do driver.
+        """
         self.driver.quit()
