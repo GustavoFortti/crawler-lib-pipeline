@@ -7,7 +7,7 @@ import unidecode
 import hashlib
 
 from shared.selenium import Selenium
-from shared.elastic import Elastic
+from shared.filesystem import FileSystem
 from shared.cryptography import create_hash_sha256, encode_url_base64
 from fake_useragent import UserAgent
 
@@ -26,14 +26,15 @@ CONFIG_JOB = {
     }]
 }
 
-class DataShelf():
+class DataMiner():
     def __init__(self, config_env: dict) -> None:
         self.config_env = config_env
         self.driver_type = self.config_env["driver"]
         self.driver_path = self.config_env['driver_path']
 
         self.index = CONFIG_JOB['default']["name"]
-        self.es = Elastic()
+
+        self.fs = FileSystem(config_env)
 
     def minner(self):
         # configurações do job
@@ -53,10 +54,12 @@ class DataShelf():
 
             url = f"{domain}{href}"
             soup = driver.get_html(url)
+            if (soup == None): continue
+
             item_page = self.page_extract_itens(soup)
 
             item_page['url'] = url
-            latitude, longitude, numero, cep = get_info_address(item_page["endereco"])
+            latitude, longitude, cep, numero = get_info_address(item_page["endereco"])
             item_page["latitude"] = latitude
             item_page["longitude"] = longitude
             item_page["numero"] = numero
@@ -72,13 +75,9 @@ class DataShelf():
             hash = create_hash_sha256(str(item_page))
             item_page["hash"] = hash
 
-            # item_page = json.dumps(item_page, ensure_ascii=False, indent=2)
-            print(item_page)
-
-            self.es.create_document(self.index, item_page)
+            self.fs.save(item_page, "json")
 
             driver.quit()
-            break
 
     def page_find_itens(self, soup: object) -> list:
         elements = []
@@ -232,11 +231,8 @@ def run(config_env: dict):
     start_time = time.time()
 
     if (config_env["env"] in ["dev", "exp"]):
-        # minner = DataShelf(config_env)
-        # minner.minner()
-        
-        es = Elastic()
-
+        minner = DataMiner(config_env)
+        minner.minner()
     elif (config_env["env"] in ["prd"]):
         prd(config_env)
     else:
@@ -248,6 +244,6 @@ def run(config_env: dict):
 
 def prd(config_env: dict):
     try:
-        DataShelf(config_env)
+        DataMiner(config_env)
     except Exception as e:
         print(f"Ocorreu um erro durante a execução da função job: {str(e)}")

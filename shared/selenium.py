@@ -6,7 +6,6 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 
 from bs4 import BeautifulSoup
 
@@ -20,7 +19,7 @@ class Selenium():
             self.driver = webdriver.Chrome(executable_path=caminho_chromedriver, options=opcoes)
         elif (driver_type == "firefox"):
             firefox_options = Options()
-            firefox_options.add_argument("--headless")
+            # firefox_options.add_argument("--headless")
             self.driver = webdriver.Firefox(options=firefox_options)
         else:
             self.driver = None
@@ -28,24 +27,27 @@ class Selenium():
         self.logger = logging.getLogger(__name__)
 
     def get_html(self, url: str) -> object:
-        self.logger.info(f"GET URL: {url}")
+        print(f"GET URL: {url}")
 
+        soup = None
         html = None
         with self.driver as driver:
             driver.get(url)
+
+            time.sleep(2)
+
             try:
-                wait = WebDriverWait(driver, 10)
+                wait = WebDriverWait(driver, 20)
                 wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.property-card__labels-container')))
                 html = driver.page_source
-                if html is not None:
+
+                if (html):
                     soup = BeautifulSoup(html, 'html.parser')
-                    self.logger.info("SUCCESS")
+                    print("SUCCESS")
                 else:
-                    self.logger.error("Failed to retrieve HTML content from the page")
-            except TimeoutException:
-                self.logger.error("Timeout occurred while waiting for element")
+                    print("Failed to retrieve HTML content from the page")
             except Exception as e:
-                self.logger.error(f"An error occurred: {str(e)}")
+                print(f"An error occurred: {str(e)}")
 
         return soup
     
