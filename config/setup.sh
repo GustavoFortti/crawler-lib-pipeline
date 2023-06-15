@@ -2,7 +2,7 @@
 
 install_pip() {
     if command -v pip >/dev/null 2>&1; then
-    echo "O pip está instalado."
+    echo "O pip esta instalado."
     else
         sudo curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         python3 get-pip.py
@@ -16,22 +16,22 @@ install_lib() {
     if ! pip show "$lib" >/dev/null 2>&1; then
         echo "Instalando $lib..."
         if pip install "$lib"; then
-            echo "Instalação de $lib concluída com sucesso."
+            echo "Instalacao de $lib concluída com sucesso."
         else
             echo "Falha ao instalar $lib."
         fi
     else
-        echo "$lib já está instalada."
+        echo "$lib ja esta instalada."
     fi
 }
 
 install_sys() {
     local lib=$1
     if command -v "$lib" >/dev/null 2>&1; then
-        echo "O pip está instalado."
+        echo "O pip esta instalado."
     else
         if sudo apt-get install -y "$lib"; then
-            echo "Instalação de $lib concluída com sucesso."
+            echo "Instalacao de $lib concluída com sucesso."
         else
             echo "Falha ao instalar $lib."
         fi
@@ -47,6 +47,6 @@ install_from_requirements() {
             eval $install_file "$lib"
         done < "$requirements_file"
     else
-        echo "Arquivo $requirements_file não encontrado."
+        echo "Arquivo $requirements_file nao encontrado."
     fi
 }

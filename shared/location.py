@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup
 
 def get_address_number(address: str) -> str:
     """
-    Extrai o número do endereço.
-    :param address: O endereço.
-    :return: O número do endereço.
+    Extrai o número do endereco.
+    :param address: O endereco.
+    :return: O número do endereco.
     """
     patter_number = r"\d+"
     numbers = re.findall(patter_number, address)
@@ -23,11 +23,11 @@ def get_address_number(address: str) -> str:
     else:
         return None
 
-def get_info_address(address: str) -> tuple[str, str, str, str]:
+def get_info_address(address: str):
     """
-    Obtém informações de um endereço.
-    :param address: O endereço.
-    :return: Uma tupla contendo latitude, longitude, CEP e número do endereço.
+    Obtém informacoes de um endereco.
+    :param address: O endereco.
+    :return: Uma tupla contendo latitude, longitude, CEP e número do endereco.
     """
     number = get_address_number(address)
 

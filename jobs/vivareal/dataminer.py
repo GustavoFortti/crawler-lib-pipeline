@@ -11,40 +11,28 @@ from fake_useragent import UserAgent
 
 from shared.location import get_info_address
 
-CONFIG_JOB = {
-    "default": {
-        "name": "vivareal",
-        "domain": "https://www.vivareal.com.br",
-        "index": {"key": "__index__", "range": []}
-    },
-    "sets": [{
-        "id": 1,
-        "subject": "venda-sp-sorocaba",
-        "href": "/venda/sp/sorocaba/#onde=Brasil,S%C3%A3o%20Paulo,sorocaba,,,,,,BR%3ESao%20Paulo%3ENULL%3Esorocaba,,,&tipos=apartamento_residencial,casa_residencial",
-    }]
-}
+from jobs.vivareal.config import JOB_CONFIG
 
 class DataMiner():
-    def __init__(self, config_env: dict) -> None:
+    def __init__(self, env_config: dict) -> None:
         """
         Inicializa a classe DataMiner.
-        :param config_env: Dicionario contendo as configuracoes do ambiente.
+        :param env_config: Dicionario contendo as configuracoes do ambiente.
         """
-        self.config_env = config_env
-        self.driver_type = self.config_env["driver"]
-        self.driver_path = self.config_env['driver_path']
+        self.env_config = env_config
+        self.driver_type = self.env_config["driver"]
+        self.driver_path = self.env_config['driver_path']
 
-        self.index = CONFIG_JOB['default']["name"]
+        self.index = JOB_CONFIG['default']["name"]
 
-        self.fs = FileSystem(config_env)
+        self.fs = FileSystem(env_config)
 
     def minner(self) -> None:
         """
         Realiza a mineracao de dados.
         """
-
-        domain = CONFIG_JOB['default']["domain"]
-        href = CONFIG_JOB['sets'][0]["href"]
+        domain = JOB_CONFIG['default']["domain"]
+        href = JOB_CONFIG['sets'][0]["href"]
         url = f"{domain}{href}"
 
         driver = Selenium(self.driver_type, self.driver_path)
@@ -167,7 +155,6 @@ class DataMiner():
         :param soup: O objeto BeautifulSoup contendo o HTML da pagina.
         :param download: Indica se as imagens devem ser baixadas ou apenas suas URLs devem ser salvas.
         """
-        # Extrair imagens do imovel
         image_urls = []
         carousel_container = soup.find(class_='carousel__container')
         if carousel_container:
@@ -185,7 +172,7 @@ class DataMiner():
             new_url = re.sub(r'\d+x\d+', max_size, url)
             file_type = self.get_image_type_from_url(new_url)
             file_name = encode_url_base64(new_url)
-            uri = self.config_env["uri"]
+            uri = self.env_config["uri"]
 
             if self.validate_image(url):
                 if (download):
@@ -274,14 +261,14 @@ class DataMiner():
         file_extension = url.split(".")[-1]
         return file_extension
 
-def run(config_env: dict) -> None:
+def run(env_config: dict) -> None:
     start_time = time.time()
 
-    if (config_env["env"] in ["dev", "exp"]):
-        crawler = DataMiner(config_env)
+    if (env_config["env"] in ["dev", "exp"]):
+        crawler = DataMiner(env_config)
         crawler.minner()
-    elif (config_env["env"] in ["prd"]):
-        prd(config_env)
+    elif (env_config["env"] in ["prd"]):
+        prd(env_config)
     else:
         print("Definir ambiente de execucao")
         
@@ -289,8 +276,8 @@ def run(config_env: dict) -> None:
     execution_time = end_time - start_time
     print(f"Tempo de execucao: {execution_time} segundos")
 
-def prd(config_env: dict) -> None:
+def prd(env_config: dict) -> None:
     try:
-        DataMiner(config_env)
+        DataMiner(env_config)
     except Exception as e:
         print(f"Ocorreu um erro durante a execucao da funcao job: {str(e)}")

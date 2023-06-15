@@ -2,15 +2,15 @@ import os
 import json
 
 class FileSystem():
-    def __init__(self, config_env: dict) -> None:
+    def __init__(self, env_config: dict) -> None:
         """
         Inicializa a classe FileSystem.
-        :param config_env: Dicionário contendo as configurações do ambiente.
+        :param env_config: Dicionario contendo as configuracoes do ambiente.
         """
-        uri = config_env["uri"]
-        name = config_env["job_name"]
+        uri = env_config["uri"]
+        job_name = env_config["job_name"]
 
-        self.data_path = f"{uri}/{name}"
+        self.file_path = f"{uri}/{job_name}"
 
     def save(self, data: dict, type_file: str) -> None:
         """
@@ -29,18 +29,18 @@ class FileSystem():
         Salva os dados em um arquivo JSON.
         :param data: Os dados a serem salvos.
         """
-        data_path = f"{self.data_path}.json"
+        file_path = f"{self.file_path}.json"
 
-        if not os.path.exists(data_path):
-            with open(data_path, "w") as arquivo:
-                arquivo.write(json.dumps({}))
+        if not os.path.exists(file_path):
+            with open(file_path, "w") as file:
+                file.write(json.dumps({}))
 
-        with open(data_path, "r") as f:
+        with open(file_path, "r") as f:
             json_data = json.load(f)
         
         duplicate = any(data["id"] == id for id in json_data.keys())
         if not duplicate:
             json_data[data["id"]] = data
 
-            with open(data_path, "w") as arquivo:
-                json.dump(json_data, arquivo, ensure_ascii=False)
+            with open(file_path, "w") as file:
+                json.dump(json_data, file, ensure_ascii=False)

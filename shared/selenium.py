@@ -32,9 +32,9 @@ class Selenium():
 
     def get_html(self, url: str) -> object:
         """
-        Obtém o HTML de uma página.
-        :param url: A URL da página.
-        :return: O objeto BeautifulSoup contendo o HTML da página.
+        Obtém o HTML de uma pagina.
+        :param url: A URL da pagina.
+        :return: O objeto BeautifulSoup contendo o HTML da pagina.
         """
         print(f"GET URL: {url}")
 
@@ -62,9 +62,9 @@ class Selenium():
     
     def get_url_soup(self, url: str) -> object:
         """
-        Obtém o objeto BeautifulSoup de uma página.
-        :param url: A URL da página.
-        :return: O objeto BeautifulSoup contendo o HTML da página.
+        Obtém o objeto BeautifulSoup de uma pagina.
+        :param url: A URL da pagina.
+        :return: O objeto BeautifulSoup contendo o HTML da pagina.
         """
         html = self.get_html(url)
         soup = BeautifulSoup(html, 'html.parser')
