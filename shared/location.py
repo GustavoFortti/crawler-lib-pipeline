@@ -1,5 +1,6 @@
 import re
 import requests
+import time
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
@@ -29,13 +30,17 @@ def get_info_address(address: str):
     :param address: O endereco.
     :return: Uma tupla contendo latitude, longitude, CEP e número do endereco.
     """
+    print(address)
     number = get_address_number(address)
 
     url = f"https://www.google.com/search?q={address}"
     user_agent = UserAgent()
     headers = {'User-Agent': user_agent.random}
-    response = requests.head(url, headers=headers)
+    # response = requests.head(url, headers=headers)
     response = requests.get(url, headers=headers)
+    print(response.text)
+    exit(0)
+    time.sleep(1)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, "html.parser")
         links = soup.find_all('a')

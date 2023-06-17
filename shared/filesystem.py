@@ -44,3 +44,29 @@ class FileSystem():
 
             with open(file_path, "w") as file:
                 json.dump(json_data, file, ensure_ascii=False)
+
+    def read_to_dry(self, type_file: str) -> dict:
+        """
+        Lê o conteúdo de um arquivo relacionado index do job.
+        :param type_file: O tipo de arquivo a ser lido.
+        :return: O conteúdo do arquivo lido.
+        """
+        choices = {
+            "json": self.read_json,
+        }
+        
+        data = choices.get(type_file)()
+
+        return data
+
+    def read_json(self) -> dict:
+        """
+        Lê o conteúdo de um arquivo JSON.
+        :return: O conteúdo do arquivo JSON lido.
+        """
+        file_path = f"{self.file_path}.json"
+
+        with open(file_path, "r") as f:
+            json_data = json.load(f)
+        
+        return json_data

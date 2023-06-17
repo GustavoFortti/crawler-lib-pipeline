@@ -7,9 +7,8 @@ import unidecode
 from shared.selenium import Selenium
 from shared.filesystem import FileSystem
 from shared.cryptography import create_hash_sha256, encode_url_base64
+from utils.dry_string import remove_special_characters
 from fake_useragent import UserAgent
-
-from shared.location import get_info_address
 
 from jobs.vivareal.config import JOB_CONFIG
 
@@ -50,23 +49,9 @@ class DataMiner():
             item_page = self.page_extract_itens(soup)
 
             item_page['url'] = url
-            latitude, longitude, cep, numero = get_info_address(item_page["endereco"])
-            item_page["latitude"] = latitude
-            item_page["longitude"] = longitude
-            item_page["numero"] = numero
-            item_page["cep"] = cep
+            item_page["id"] = encode_url_base64(item_page['codigo'])
 
-            if (latitude):
-                id = f"{latitude}{longitude}"
-            else:
-                id = item_page["endereco"]
-                
-            item_page["id"] = encode_url_base64(id)
-
-            hash = create_hash_sha256(str(item_page))
-            item_page["hash"] = hash
-
-            self.fs.save(item_page, "json")
+            self.fs.save(item_page, JOB_CONFIG['bulkload']["file-format"])
 
             driver.quit()
 
@@ -135,18 +120,6 @@ class DataMiner():
         self.save_images(property_info, soup, False)
 
         return property_info
-
-    def remove_special_characters(self, string: str) -> str:
-        """
-        Remove caracteres especiais de uma string.
-        :param string: A string a ser processada.
-        :return: A string resultante apos a remocao dos caracteres especiais.
-        """
-        string = unidecode.unidecode(string)
-        string = re.sub(r'[^\w\s]', '', string)
-        string = re.sub(r'\s+', '_', string.lower())
-
-        return string
 
     def save_images(self, property_info: dict, soup: object, download: bool) -> None:
         """

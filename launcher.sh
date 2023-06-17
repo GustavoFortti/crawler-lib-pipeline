@@ -2,10 +2,11 @@
 
 LOCAL=$(pwd)/project
 
-source $LOCAL/config/env.sh
+ENV="$1"
+source $LOCAL/config/env-$ENV.sh
 
 args=(
-    "--env" "$1"
+    "--env" "$ENV"
     "--job_name" "$2"
     "--job_exec_type" "$3"
     "--driver" "$4"
@@ -13,6 +14,7 @@ args=(
     "--master" "$6"
     "--uri" "$7"
 )
+
 # source $LOCAL/shared/scripts/logger.sh
 source $LOCAL/config/setup.sh
 

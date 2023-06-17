@@ -17,14 +17,16 @@ class Elastic():
         username = os.getenv('ELASTIC_USER')
         password = os.getenv('ELASTIC_PASS')
 
+        # Criar uma instância do cliente Elasticsearch
         self.es = Elasticsearch(
-            [{'host': host, 'port': int(port), 'scheme': 'https'}],
-            basic_auth=(username, password),
-            verify_certs=False,
+            hosts=[{'host': host, 'port': port}],
+            http_auth=(username, password),
+            scheme='https',
+            verify_certs=False
         )
 
         print(self.es.ping())
-        # self.find_all()
+        # # self.find_all()
 
     def create_document(self, document: dict) -> dict:
         """
@@ -80,12 +82,12 @@ class Elastic():
             for document in data
         ]
 
-        response = helpers.bulk(self.es, actions)
+        # response = helpers.bulk(self.es, actions)
 
-        if response[0] > 0:
-            print(f"Erro ao carregar documentos: {response[0]} documentos falharam")
-        else:
-            print("Carregamento de documentos concluído com sucesso")
+        # if response[0] > 0:
+        #     print(f"Erro ao carregar documentos: {response[0]} documentos falharam")
+        # else:
+        #     print("Carregamento de documentos concluído com sucesso")
 
     def find_all(self):
         search_query = {

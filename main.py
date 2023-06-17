@@ -8,6 +8,7 @@ def main():
 
     option = {
         "dataminer": ENV_CONFIG['job_name'],
+        "datadry": ENV_CONFIG['job_name'],
         "bulkload": "general",
     }
 
