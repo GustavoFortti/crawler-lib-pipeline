@@ -1,11 +1,5 @@
 import re
-import requests
-import time
-import statistics
 from typing import Tuple
-
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
 
 from shared.selenium import Selenium
 from shared.filesystem import FileSystem
@@ -36,14 +30,14 @@ class FindLocation():
         :return: O CEP encontrado.
         """
         print("Buscando cep...")
-        cep, has_precision  = self.search_cep_by_csv(self.address)
+        cep, has_precision  = self._search_cep_by_csv(self.address)
 
         if (not cep):
-            cep, has_precision = self.serach_cep_google()
+            cep, has_precision = self._serach_cep_google()
 
         return cep, has_precision
     
-    def search_cep_by_csv(self, address: dict) -> Tuple[str, bool]:
+    def _search_cep_by_csv(self, address: dict) -> Tuple[str, bool]:
         """
         Busca o CEP em um arquivo CSV local.
         :param address: O dicionário contendo as informações do endereço.
@@ -73,7 +67,7 @@ class FindLocation():
         except:
             return None
 
-    def serach_cep_google(self) -> int:
+    def _serach_cep_google(self) -> int:
         """
         Realiza a busca do CEP pelo Google.
         :return: O CEP encontrado.
@@ -86,10 +80,10 @@ class FindLocation():
         :param cep: O CEP.
         :return: A latitude e longitude.
         """
-        latitude, longitude = self.search_latitude_longitude_by_qualocep(cep)
+        latitude, longitude = self._search_latitude_longitude_by_qualocep(cep)
         return latitude, longitude
 
-    def search_latitude_longitude_by_qualocep(self, cep: str) -> Tuple[str, str]:
+    def _search_latitude_longitude_by_qualocep(self, cep: str) -> Tuple[str, str]:
         """
         Realiza a busca da latitude e longitude pelo site QualoCep.
         :param cep: O CEP.

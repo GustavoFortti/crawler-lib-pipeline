@@ -6,7 +6,7 @@ import unidecode
 
 from shared.selenium import Selenium
 from shared.filesystem import FileSystem
-from shared.cryptography import create_hash_sha256, encode_url_base64
+from shared.cryptography import encode_url_base64
 from utils.dry_string import remove_special_characters
 from fake_useragent import UserAgent
 
@@ -34,19 +34,19 @@ class DataMiner():
         href = JOB_CONFIG['sets'][0]["href"]
         url = f"{domain}{href}"
 
-        driver = Selenium(self.driver_type, self.driver_path)
+        driver = Selenium(self.driver_type, self.driver_path, True)
         soup = driver.get_html(url)
-        href_items = self.page_find_itens(soup)
+        href_items = self._page_find_itens(soup)
         driver.quit()
 
         for href in href_items:
-            driver = Selenium(self.driver_type, self.driver_path)
+            driver = Selenium(self.driver_type, self.driver_path, True)
 
             url = f"{domain}{href}"
             soup = driver.get_html(url)
             if (soup == None): continue
 
-            item_page = self.page_extract_itens(soup)
+            item_page = self._page_extract_itens(soup)
 
             item_page['url'] = url
             item_page["id"] = encode_url_base64(item_page['codigo'])
@@ -55,7 +55,7 @@ class DataMiner():
 
             driver.quit()
 
-    def page_find_itens(self, soup: object) -> list:
+    def _page_find_itens(self, soup: object) -> list:
         """
         Encontra os itens da pagina.
         :param soup: O objeto BeautifulSoup contendo o HTML da pagina.
@@ -69,7 +69,7 @@ class DataMiner():
 
         return list(set(elements))
 
-    def page_extract_itens(self, soup: object) -> dict:
+    def _page_extract_itens(self, soup: object) -> dict:
         """
         Extrai os itens da pagina.
         :param soup: O objeto BeautifulSoup contendo o HTML da pagina.
@@ -92,7 +92,7 @@ class DataMiner():
         # Extrair caracteristicas
         features = soup.find_all(class_='features__item')
         for feature in features:
-            feature_type = self.remove_special_characters(feature['title'])
+            feature_type = remove_special_characters(feature['title'])
             feature_value = feature.text.strip()
             property_info[feature_type] = feature_value
 
@@ -117,11 +117,11 @@ class DataMiner():
         iptu_element = soup.find(class_='price__list-value iptu')
         property_info['valor_iptu'] = iptu_element.text.strip() if iptu_element else ''
 
-        self.save_images(property_info, soup, False)
+        self._save_images(property_info, soup, False)
 
         return property_info
 
-    def save_images(self, property_info: dict, soup: object, download: bool) -> None:
+    def _save_images(self, property_info: dict, soup: object, download: bool) -> None:
         """
         Salva as imagens do imovel.
         :param property_info: Dicionario contendo as informacoes do imovel.
@@ -138,26 +138,26 @@ class DataMiner():
                     image_link = image_element['src']
                     image_urls.append(image_link)
 
-        sizes = [self.change_image_size(url) for url in image_urls]
-        max_size = self.find_max_image_size(sizes)
+        sizes = [self._change_image_size(url) for url in image_urls]
+        max_size = self._find_max_image_size(sizes)
 
         for index, url in enumerate(image_urls):
             new_url = re.sub(r'\d+x\d+', max_size, url)
-            file_type = self.get_image_type_from_url(new_url)
+            file_type = self._get_image_type_from_url(new_url)
             file_name = encode_url_base64(new_url)
             uri = self.env_config["uri"]
 
-            if self.validate_image(url):
+            if self._validate_image(url):
                 if (download):
-                    self.download_image(new_url, f"{uri}{file_name}.{file_type}")
+                    self._download_image(new_url, f"{uri}{file_name}.{file_type}")
                 image_urls[index] = new_url
             else:
                 if (download):
-                    self.download_image(url, f"{uri}{file_name}.{file_type}")
+                    self._download_image(url, f"{uri}{file_name}.{file_type}")
 
         property_info["image_urls"] = image_urls
 
-    def change_image_size(self, url: str) -> str:
+    def _change_image_size(self, url: str) -> str:
         """
         Altera o tamanho da imagem na URL.
         :param url: A URL da imagem.
@@ -173,7 +173,7 @@ class DataMiner():
             print("Image size not found.")
             return ''
 
-    def find_max_image_size(self, sizes: str) -> str:
+    def _find_max_image_size(self, sizes: str) -> str:
         """
         Encontra o tamanho maximo entre uma lista de tamanhos de imagem.
         :param sizes: A lista de tamanhos de imagem.
@@ -188,7 +188,7 @@ class DataMiner():
 
         return f"{max_size[0]}x{max_size[1]}"
 
-    def validate_image(self, url: str) -> bool:
+    def _validate_image(self, url: str) -> bool:
         """
         Valida se uma URL corresponde a uma imagem valida.
         :param url: A URL da imagem.
@@ -203,7 +203,7 @@ class DataMiner():
             pass
         return False
 
-    def download_image(self, url: str, save_path: str) -> bool:
+    def _download_image(self, url: str, save_path: str) -> bool:
         """
         Baixa uma imagem da URL e a salva em um caminho especifico.
         :param url: A URL da imagem.
@@ -225,7 +225,7 @@ class DataMiner():
             pass
         return False
 
-    def get_image_type_from_url(self, url: str) -> str:
+    def _get_image_type_from_url(self, url: str) -> str:
         """
         Obtem o tipo de imagem com base na URL.
         :param url: A URL da imagem.

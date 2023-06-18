@@ -24,12 +24,12 @@ class FileSystem():
             self.file_path = f"{self.sys_path}/{file_name}"
 
         choices = {
-            "json": self.save_json,
+            "json": self._save_json,
         }
         
         choices.get(type_file)(data)
 
-    def save_json(self, data: dict) -> None:
+    def _save_json(self, data: dict) -> None:
         """
         Salva os dados em um arquivo JSON.
         :param data: Os dados a serem salvos.
@@ -62,15 +62,15 @@ class FileSystem():
             self.file_path = f"{self.sys_path}/{file_name}"
 
         choices = {
-            "json": self.read_json,
-            "csv": self.read_with_pandas
+            "json": self._read_json,
+            "csv": self._read_with_pandas
         }
         
         data = choices.get(type_file)()
 
         return data
 
-    def read_with_pandas(self) -> object:
+    def _read_with_pandas(self) -> object:
         """
         Lê o conteúdo de um arquivo CSV com o pandas.
         :return: O conteúdo do arquivo CSV lido.
@@ -79,7 +79,7 @@ class FileSystem():
 
         return df
 
-    def read_json(self) -> dict:
+    def _read_json(self) -> dict:
         """
         Lê o conteúdo de um arquivo JSON.
         :return: O conteúdo do arquivo JSON lido.

@@ -5,8 +5,7 @@ from copy import deepcopy
 
 from shared.filesystem import FileSystem
 from shared.location import FindLocation
-from shared.cryptography import create_hash_sha256, encode_url_base64
-from utils.dry_string import remove_special_characters
+from shared.cryptography import create_hash_sha256
 
 from jobs.vivareal.config import JOB_CONFIG
 
@@ -27,13 +26,13 @@ class DataDry():
         """
         documents = self.fs.read_file(JOB_CONFIG['bulkload']["file-format"])
         for document in documents.values():
-            document = self.restructure_data(document)
-            document = self.set_location_for_data(document)
+            document = self._restructure_data(document)
+            document = self._set_location_for_data(document)
             document["hash"] = create_hash_sha256(str(document))
 
             self.fs.save(document, "json", f"{self.name}_dry")
 
-    def set_location_for_data(self, document: dict) -> dict:
+    def _set_location_for_data(self, document: dict) -> dict:
         """
         Define a localização para cada entrada de dados.
         :param document: O dicionário de dados.
@@ -44,8 +43,8 @@ class DataDry():
     
         matches = re.findall(r"^(.*?),?\s*(\d+)?\s*[-,]?\s*([\w\s]+)?,?\s*(\w+)?\s*[-,]?\s*(\w+)?$", endereco)
         
-        numero = matches[0][1].strip() if matches[0][1] else None
         rua = matches[0][0].strip() if matches[0][0] else None
+        numero = matches[0][1].strip() if matches[0][1] else None
         bairro = matches[0][2].strip() if matches[0][2] else None
         cidade = matches[0][3].strip() if matches[0][3] else None
         estado = matches[0][4].strip() if matches[0][4] else None
@@ -72,7 +71,7 @@ class DataDry():
 
         return document
 
-    def restructure_data(self, document: dict) -> dict:
+    def _restructure_data(self, document: dict) -> dict:
         """
         Restrutura o dicionário de dados para um formato desejado.
         :param document: O dicionário de dados.

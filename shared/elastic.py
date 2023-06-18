@@ -12,21 +12,39 @@ class Elastic():
         job_name = env_config["job_name"]
         self.index_name = job_name
 
-        host = os.getenv('ELASTIC_HOST')
-        port = os.getenv('ELASTIC_PORT')
-        username = os.getenv('ELASTIC_USER')
-        password = os.getenv('ELASTIC_PASS')
+        self.host = os.getenv('ELASTIC_HOST')
+        self.port = os.getenv('ELASTIC_PORT')
+        self.username = os.getenv('ELASTIC_USER')
+        self.password = os.getenv('ELASTIC_PASS')
 
-        # Criar uma instância do cliente Elasticsearch
-        self.es = Elasticsearch(
-            hosts=[{'host': host, 'port': port}],
-            http_auth=(username, password),
-            scheme='https',
-            verify_certs=False
-        )
+        self.connection = None
 
-        print(self.es.ping())
-        # # self.find_all()
+        self.connect()
+
+    def connect(self):
+        try:
+            self.es = Elasticsearch(
+                hosts=[{'host': self.host, 'port': self.port}],
+                http_auth=(self.username, self.password),
+                scheme='https',
+                verify_certs=False
+            )
+            self.test_connection()
+        except (Exception) as e:
+            print(f"Error ao conectar com Elasticsearch: {e}")
+
+    def test_connection(self):
+        """
+        Testa a conexão com o Elasticsearch.
+        Retorna True se a conexão for bem-sucedida, False caso contrário.
+        """
+        try:
+            self.connection = self.es.ping()
+            if (self.connection):
+                print("Conctado ao Elasticsearch")
+        except Exception as e:
+            print(f"Erro ao testar a conexão com o Elasticsearch: {str(e)}")
+            return False
 
     def create_document(self, document: dict) -> dict:
         """
@@ -69,25 +87,27 @@ class Elastic():
         resultado = self.es.exists(index=self.index_name, id=id)
         return resultado
     
-    def bulkload(self, data):
+    def bulkload(self, documents):
         """
         Realiza o carregamento em massa de documentos no Elasticsearch.
-        :param data: Uma lista de documentos a serem indexados.
+        :param documents: Uma lista de documentos a serem indexados.
         """
         actions = [
             {
                 "_index": self.index_name,
                 "_source": document
             }
-            for document in data
+            for document in documents
         ]
 
-        # response = helpers.bulk(self.es, actions)
-
-        # if response[0] > 0:
-        #     print(f"Erro ao carregar documentos: {response[0]} documentos falharam")
-        # else:
-        #     print("Carregamento de documentos concluído com sucesso")
+        success, _ = helpers.bulk(self.es, actions)
+        len_docs = len(documents)
+        
+        if success == len_docs:
+            print("Carregamento de documentos concluído com sucesso")
+        else:
+            failed = len_docs - success
+            print(f"Erro ao carregar documentos: {failed} documentos falharam")
 
     def find_all(self):
         search_query = {

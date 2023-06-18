@@ -18,11 +18,11 @@ args=(
 # source $LOCAL/shared/scripts/logger.sh
 source $LOCAL/config/setup.sh
 
-if [[ "$DRIVER" != "local-selenium" ]]; then
-    install_pip
-    install_from_requirements "$LOCAL/config/requirements-sys.txt" "install_sys"
-    install_from_requirements "$LOCAL/config/requirements-py.txt" "install_lib"
-fi
+# if [[ "$DRIVER" != "local-selenium" ]]; then
+#     install_pip
+#     install_from_requirements "$LOCAL/config/requirements-sys.txt" "install_sys"
+#     install_from_requirements "$LOCAL/config/requirements-py.txt" "install_lib"
+# fi
 
 echo "${args[@]}"
 python3 "$LOCAL/main.py" "${args[@]}"

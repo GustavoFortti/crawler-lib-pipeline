@@ -59,17 +59,6 @@ class Selenium():
             print(f"An error occurred: {str(e)}")
 
         return soup
-    
-    def get_url_soup(self, url: str) -> object:
-        """
-        Obtém o objeto BeautifulSoup de uma pagina.
-        :param url: A URL da pagina.
-        :return: O objeto BeautifulSoup contendo o HTML da pagina.
-        """
-        html = self.get_html(url)
-        soup = BeautifulSoup(html, 'html.parser')
-
-        return soup
 
     def quit(self) -> None:
         """
