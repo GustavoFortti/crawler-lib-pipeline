@@ -14,12 +14,15 @@ class FileSystem():
         self.sys_path = f"{uri}/data-pipeline"
         self.file_path = f"{self.sys_path}/{job_name}"
 
-    def save(self, data: dict, type_file: str) -> None:
+    def save(self, data: dict, type_file: str, file_name: str=None) -> None:
         """
         Salva os dados em um arquivo.
         :param data: Os dados a serem salvos.
         :param type_file: O tipo de arquivo (ex: "json").
         """
+        if (file_name):
+            self.file_path = f"{self.sys_path}/{file_name}"
+
         choices = {
             "json": self.save_json,
         }

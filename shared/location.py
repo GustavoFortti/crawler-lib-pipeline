@@ -30,20 +30,20 @@ class FindLocation():
         """
         self.address = address
 
-    def get_cep(self):
+    def get_cep(self) -> Tuple[str, bool]:
         """
         Obtém o CEP do endereço.
         :return: O CEP encontrado.
         """
         print("Buscando cep...")
-        cep = self.search_cep_by_csv(self.address)
+        cep, has_precision  = self.search_cep_by_csv(self.address)
 
         if (not cep):
-            cep = self.serach_cep_google()
+            cep, has_precision = self.serach_cep_google()
 
-        return cep
+        return cep, has_precision
     
-    def search_cep_by_csv(self, address: dict) -> int:
+    def search_cep_by_csv(self, address: dict) -> Tuple[str, bool]:
         """
         Busca o CEP em um arquivo CSV local.
         :param address: O dicionário contendo as informações do endereço.
@@ -67,9 +67,9 @@ class FindLocation():
             len_cep = len(cep)
             if (len_cep > 1):
                 median = int(len_cep / 2)
-                return cep[median]
+                return str(cep[median]), False 
             else:
-                return cep[0]
+                return str(cep[0]), True
         except:
             return None
 
@@ -78,9 +78,9 @@ class FindLocation():
         Realiza a busca do CEP pelo Google.
         :return: O CEP encontrado.
         """
-        return None
+        return None, None
     
-    def get_latitude_longitude(self, cep: int) -> Tuple[str, str]:
+    def get_latitude_longitude(self, cep: str) -> Tuple[str, str]:
         """
         Obtém a latitude e longitude do CEP fornecido.
         :param cep: O CEP.
@@ -89,12 +89,13 @@ class FindLocation():
         latitude, longitude = self.search_latitude_longitude_by_qualocep(cep)
         return latitude, longitude
 
-    def search_latitude_longitude_by_qualocep(self, cep: int) -> Tuple[str, str]:
+    def search_latitude_longitude_by_qualocep(self, cep: str) -> Tuple[str, str]:
         """
         Realiza a busca da latitude e longitude pelo site QualoCep.
         :param cep: O CEP.
         :return: A latitude e longitude encontradas.
         """
+        print("Buscando localização...")
         driver = Selenium(self.driver_type, self.driver_path, True)
 
         url = f"https://www.qualocep.com/busca-cep/{cep}"
