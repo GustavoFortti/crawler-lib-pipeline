@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 
 class Selenium():
-    def __init__(self, driver_type: str, driver_path: str) -> None:
+    def __init__(self, driver_type: str, driver_path: str, headless: bool=False) -> None:
         """
         Inicializa a classe Selenium.
         :param driver_type: O tipo de driver a ser utilizado ("chrome" ou "firefox").
@@ -19,7 +19,7 @@ class Selenium():
         if (driver_type == "chrome"):
             chromedriver_path = driver_path
             opcoes = webdriver.ChromeOptions()
-            # opcoes.add_argument('--headless')
+            if (headless): opcoes.add_argument('--headless')
             self.driver = webdriver.Chrome(executable_path=chromedriver_path, options=opcoes)
         elif (driver_type == "firefox"):
             firefox_options = Options()
@@ -40,14 +40,14 @@ class Selenium():
 
         soup = None
         html = None
-        with self.driver as driver:
-            driver.get(url)
+        try:
+            with self.driver as driver:
+                driver.get(url)
 
-            time.sleep(2)
+                time.sleep(1)
 
-            try:
-                wait = WebDriverWait(driver, 20)
-                wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.property-card__labels-container')))
+                WebDriverWait(driver, 20)
+                # wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.property-card__labels-container')))
                 html = driver.page_source
 
                 if (html):
@@ -55,8 +55,8 @@ class Selenium():
                     print("SUCCESS")
                 else:
                     print("Failed to retrieve HTML content from the page")
-            except Exception as e:
-                print(f"An error occurred: {str(e)}")
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
 
         return soup
     
