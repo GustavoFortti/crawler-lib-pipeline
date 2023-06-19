@@ -20,21 +20,21 @@ class DataDry():
         self.name = JOB_CONFIG['default']["name"]
         self.fs = FileSystem(env_config)
 
-    def dry(self):
+    def start(self):
         """
         Realiza o processo de limpeza dos dados.
         """
         documents = self.fs.read_file(JOB_CONFIG['bulkload']["file-format"])
         for document in documents.values():
             document = self._restructure_data(document)
-            document = self._set_location_for_data(document)
+            document = self._set_location(document)
             document["hash"] = create_hash_sha256(str(document))
 
             self.fs.save(document, "json", f"{self.name}_dry")
 
-    def _set_location_for_data(self, document: dict) -> dict:
+    def _set_location(self, document: dict) -> dict:
         """
-        Define a localização para cada entrada de dados.
+        Define a localização (cep. numero. latitude e longitude) do imovel.
         :param document: O dicionário de dados.
         :return: O dicionário de dados atualizado.
         """
@@ -65,8 +65,9 @@ class DataDry():
         document["imovel"]["endereco"] = {}
         document["imovel"]["endereco"]["cep"] = cep
         document["imovel"]["endereco"]["numero"] = numero
-        document["imovel"]["endereco"]["latitude"] = latitude
-        document["imovel"]["endereco"]["longitude"] = longitude
+        document["imovel"]["endereco"]["location"] = {}
+        document["imovel"]["endereco"]["location"]["lat"] = latitude
+        document["imovel"]["endereco"]["location"]["lon"] = longitude
         document["imovel"]["endereco"]["has_precision"] = has_precision
 
         return document
@@ -142,7 +143,7 @@ def run(env_config: dict) -> None:
 
     if (env_config["env"] in ["dev", "exp"]):
         datadry = DataDry(env_config)
-        datadry.dry()
+        datadry.start()
     elif (env_config["env"] in ["prd"]):
         prd(env_config)
     else:

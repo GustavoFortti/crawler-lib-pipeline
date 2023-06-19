@@ -30,6 +30,64 @@ JOB_CONFIG = {
         "href": "/venda/sp/sorocaba/#onde=Brasil,S%C3%A3o%20Paulo,sorocaba,,,,,,BR%3ESao%20Paulo%3ENULL%3Esorocaba,,,&tipos=apartamento_residencial,casa_residencial",
     }],
     "bulkload": {
-        "file-format": "json"
+        "file-format": "json",
+        "mapping": {
+            "mappings": {
+                "properties": {
+                    "titulo": { "type": "text" },
+                    "codigo": { "type": "keyword" },
+                    "descricao": { "type": "text" },
+                    "id": { "type": "keyword" },
+                    "imovel": {
+                        "properties": {
+                            "caracteristicas": {
+                                "properties": {
+                                    "quartos": { "type": "text" },
+                                    "banheiros": { "type": "text" },
+                                    "suites": { "type": "text" },
+                                    "vagas": { "type": "text" },
+                                    "caracteristicas_adicionais": { "type": "keyword" }
+                                }
+                            },
+                            "endereco": {
+                                "properties": {
+                                    "cep": { "type": "keyword" },
+                                    "numero": { "type": "keyword" },
+                                    "location": { "type": "geo_point" },
+                                    "has_precision": { "type": "boolean" }
+                                }
+                            },
+                            "area": { "type": "text" },
+                            "unidade": { "type": "keyword" },
+                            "preco": { "type": "text" },
+                            "moeda": { "type": "keyword" },
+                            "valor_condominio": { "type": "text" },
+                            "valor_iptu": { "type": "text" }
+                        }
+                    },
+                    "hash": { "type": "keyword" }
+                }
+            },
+            "settings": {
+                "analysis": {
+                    "analyzer": {
+                        "my_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": [
+                            "lowercase",
+                            "my_stemmer"
+                        ]
+                        }
+                    },
+                    "filter": {
+                        "my_stemmer": {
+                            "type": "stemmer",
+                            "name": "portuguese"
+                        }
+                    }
+                }
+            }
+        }
     }
 }

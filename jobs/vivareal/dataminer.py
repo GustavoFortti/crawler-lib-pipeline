@@ -26,7 +26,7 @@ class DataMiner():
 
         self.fs = FileSystem(env_config)
 
-    def minner(self) -> None:
+    def start(self) -> None:
         """
         Realiza a mineracao de dados.
         """
@@ -238,8 +238,8 @@ def run(env_config: dict) -> None:
     start_time = time.time()
 
     if (env_config["env"] in ["dev", "exp"]):
-        crawler = DataMiner(env_config)
-        crawler.minner()
+        dataminer = DataMiner(env_config)
+        dataminer.start()
     elif (env_config["env"] in ["prd"]):
         prd(env_config)
     else:

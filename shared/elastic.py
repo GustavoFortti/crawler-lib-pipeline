@@ -1,4 +1,5 @@
 import os
+from typing import Any, Dict, Union, List
 
 from datetime import datetime
 from elasticsearch import Elasticsearch, helpers
@@ -132,3 +133,67 @@ class Elastic():
                 print(document)
         else:
             print("No documents found in the index.")
+
+
+    from typing import Any, Dict, Union
+
+    def generate_empty_document(self, mapping: Dict[str, Union[str, Dict[str, Any]]]) -> Dict[str, Any]:
+        """
+        Gera um documento Elasticsearch vazio com base no mapeamento fornecido.
+        :param mapping: O mapeamento Elasticsearch para o documento.
+        :return: O documento Elasticsearch vazio.
+        """
+        document = {}
+
+        for field, field_type in mapping.items():
+            if field_type == "object":
+                document[field] = self.generate_empty_document(mapping[field]["properties"])
+            elif field_type == "nested":
+                document[field] = []
+            elif field_type == "integer":
+                document[field] = None
+            elif field_type == "double":
+                document[field] = None
+            elif field_type in ["keyword", "text"]:
+                document[field] = ""
+            elif field_type == "boolean":
+                document[field] = False
+            elif field_type == "geo_point":
+                document[field] = {"lat": "", "lon": ""}
+            else:
+                document[field] = None
+
+        return document
+
+    def fill_document(self, mapping: Dict[str, Union[str, Dict[str, Any]]], values: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Gera um documento Elasticsearch vazio com base no mapeamento fornecido.
+        :param mapping: O mapeamento Elasticsearch para o documento.
+        :return: O documento Elasticsearch vazio.
+        """
+        document = {}
+
+        for field, field_type in mapping.items():
+            value = values.get(field)
+            
+            if field_type == "object":
+                document[field] = self.fill_document(mapping[field]["properties"], value) if value else {}
+            elif field_type == "nested":
+                document[field] = [self.fill_document(mapping[field]["properties"], item) for item in value] if value else []
+            elif field_type == "integer":
+                document[field] = int(value) if isinstance(value, int) else None
+            elif field_type == "double":
+                document[field] = float(value) if isinstance(value, (int, float)) else None
+            elif field_type in ["keyword", "text"]:
+                document[field] = str(value) if isinstance(value, str) else ""
+            elif field_type == "boolean":
+                document[field] = bool(value) if isinstance(value, bool) else False
+            elif field_type == "geo_point":
+                if isinstance(value, dict) and "lat" in value and "lon" in value:
+                    document[field] = {"lat": str(value["lat"]), "lon": str(value["lon"])}
+                else:
+                    document[field] = {"lat": "", "lon": ""}
+            else:
+                document[field] = None
+
+        return document

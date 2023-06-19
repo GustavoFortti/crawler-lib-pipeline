@@ -21,7 +21,7 @@ class BulkLoad():
         job_confg_path = f"jobs.{self.job_name}.config"
         self.job_config = importlib.import_module(job_confg_path).JOB_CONFIG
 
-    def run(self) -> None:
+    def start(self) -> None:
         """
         Executa o processo de carga em massa.
         Chama a função específica para o formato de arquivo configurado no job.
@@ -50,7 +50,7 @@ def run(env_config: dict) -> None:
 
     if (env_config["env"] in ["dev", "exp"]):
         bulkload = BulkLoad(env_config)
-        bulkload.run()
+        bulkload.start()
     elif (env_config["env"] in ["prd"]):
         prd(env_config)
     else:

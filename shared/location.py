@@ -64,7 +64,8 @@ class FindLocation():
                 return str(cep[median]), False 
             else:
                 return str(cep[0]), True
-        except:
+        except Exception as e:
+            print(f"Ocorreu um erro durante a execucao da funcao _search_cep_by_csv: {str(e)}")
             return None
 
     def _serach_cep_google(self) -> int:
