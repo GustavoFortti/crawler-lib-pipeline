@@ -27,7 +27,7 @@ JOB_CONFIG = {
     "sets": [{
         "id": 1,
         "subject": "venda-sp-sorocaba",
-        "href": "/venda/sp/sorocaba/#onde=Brasil,S%C3%A3o%20Paulo,sorocaba,,,,,,BR%3ESao%20Paulo%3ENULL%3Esorocaba,,,&tipos=apartamento_residencial,casa_residencial",
+        "href": "/venda/sp/sorocaba/#onde=Brasil,S%C3%A3o%20Paulo,sorocaba,,,,,,BR%3ESao%20Paulo%3ENULL%3Esorocaba,,,&tipos=apartamento_residencial,casa_residencial"
     }],
     "bulkload": {
         "file-format": "json",
@@ -72,12 +72,12 @@ JOB_CONFIG = {
                 "analysis": {
                     "analyzer": {
                         "my_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "standard",
-                        "filter": [
-                            "lowercase",
-                            "my_stemmer"
-                        ]
+                            "type": "custom",
+                            "tokenizer": "standard",
+                            "filter": [
+                                "lowercase",
+                                "my_stemmer"
+                            ]
                         }
                     },
                     "filter": {

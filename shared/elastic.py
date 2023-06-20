@@ -1,18 +1,19 @@
 import os
 from copy import deepcopy
-from typing import Any, Dict, Union, List
+from typing import Tuple, Dict, Any
 from datetime import datetime
 
 from elasticsearch import Elasticsearch, helpers
 
 class Elastic():
-    def __init__(self, env_config) -> None:
+    def __init__(self, env_config, job_config) -> None:
         """
         Inicializa a classe Elastic.
         Recupera as configurações de conexão com o Elasticsearch a partir de variáveis de ambiente.
         """
         job_name = env_config["job_name"]
         self.index_name = job_name
+        self.job_config = job_config
 
         self.host = os.getenv('ELASTIC_HOST')
         self.port = os.getenv('ELASTIC_PORT')
@@ -20,8 +21,9 @@ class Elastic():
         self.password = os.getenv('ELASTIC_PASS')
 
         self.connection = None
-
         self.connect()
+
+        self.mapping = self.job_config["bulkload"]["mapping"]
 
     def connect(self):
         try:
@@ -134,57 +136,4 @@ class Elastic():
                 print(document)
         else:
             print("No documents found in the index.")
-
-
-    from typing import Any, Dict, Union
-
-    def generate_empty_document(self, mapping: Dict[str, Union[str, Dict[str, Any]]]) -> Dict[str, Any]:
-        """
-        Gera um documento Elasticsearch vazio com base no mapeamento fornecido.
-        :param mapping: O mapeamento Elasticsearch para o documento.
-        :return: O documento Elasticsearch vazio.
-        """
-        document = {}
-
-        for field, field_type in mapping.items():
-            if field_type == "object":
-                document[field] = self.generate_empty_document(mapping[field]["properties"])
-            elif field_type == "nested":
-                document[field] = []
-            elif field_type == "integer":
-                document[field] = None
-            elif field_type == "double":
-                document[field] = None
-            elif field_type in ["keyword", "text"]:
-                document[field] = ""
-            elif field_type == "boolean":
-                document[field] = False
-            elif field_type == "geo_point":
-                document[field] = {"lat": "", "lon": ""}
-            else:
-                document[field] = None
-
-        return document
-
     
-    def fill_document(document: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
-        """
-        Modifica um documento Elasticsearch com base nos valores fornecidos.
-        :param document: O documento Elasticsearch a ser modificado.
-        :param kwargs: Valores a serem atribuídos aos campos do documento.
-        :return: O documento Elasticsearch modificado.
-        """
-        modified_document = document.deepcopy()
-
-        for key, value in kwargs.items():
-            keys = key.split('.')
-            current = modified_document
-
-            for k in keys[:-1]:
-                if k not in current:
-                    current[k] = {}
-                current = current[k]
-
-            current[keys[-1]] = value
-
-        return modified_document

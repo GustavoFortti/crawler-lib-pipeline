@@ -13,13 +13,13 @@ class BulkLoad():
         :param env_config: Um dicionário contendo as configurações do ambiente.
         """
         self.job_name = env_config["job_name"]
+        job_confg_path = f"jobs.{self.job_name}.config"
+        self.job_config = importlib.import_module(job_confg_path).JOB_CONFIG
 
-        self.es = Elastic(env_config)
+        self.es = Elastic(env_config, self.job_config)
         # self.ps = PostgreSQL(env_config)
         self.fs = FileSystem(env_config)
 
-        job_confg_path = f"jobs.{self.job_name}.config"
-        self.job_config = importlib.import_module(job_confg_path).JOB_CONFIG
 
     def start(self) -> None:
         """
