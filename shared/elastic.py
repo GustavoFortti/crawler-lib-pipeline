@@ -23,7 +23,7 @@ class Elastic():
         self.connection = None
         self.connect()
 
-        self.mapping = self.job_config["bulkload"]["mapping"]
+        
 
     def connect(self):
         try:
@@ -103,6 +103,14 @@ class Elastic():
             }
             for document in documents
         ]
+
+        if (not self.es.indices.exists(index=self.index_name)):
+            mapping = self.job_config["bulkload"]["mapping"]
+            response = self.es.indices.create(index=self.index_name, body=mapping)
+
+            if (not response["acknowledged"]):
+                print("Erro ao criar o indice")
+                return
 
         success, _ = helpers.bulk(self.es, actions)
         len_docs = len(documents)
