@@ -20,20 +20,20 @@ class DataDry():
         self.name = JOB_CONFIG['default']["name"]
         self.fs = FileSystem(env_config)
 
-        properties = JOB_CONFIG["bulkload"]["mapping"]['mappings']['properties']
+        properties = JOB_CONFIG["bulkload"]["elastic"]["mapping"]['mappings']['properties']
         self.empty_document = self._generate_empty_document(properties)
         
     def start(self):
         """
         Realiza o processo de limpeza dos dados.
         """
-        documents = self.fs.read_file(JOB_CONFIG['bulkload']["file-format"])
+        documents = self.fs.read_file(JOB_CONFIG['bulkload']["elastic"]["file-format"])
         for document in documents.values():
             new_document = deepcopy(self.empty_document)
             new_document = self._restructure_data(document, new_document)
             new_document = self._set_location(document, new_document)
             new_document["hash"] = create_hash_sha256(str(new_document))
-
+            
             self.fs.save(new_document, "json", f"{self.name}_dry")
 
     def _set_location(self, document: dict, new_document: dict) -> dict:
@@ -65,7 +65,10 @@ class DataDry():
         cep, has_precision = fl.get_cep()
         latitude, longitude = fl.get_latitude_longitude(cep)
 
-        new_document["imovel"]["endereco"]["cep"] = cep
+        new_document["imovel"]["endereco"]["rua"] = rua
+        new_document["imovel"]["endereco"]["bairro"] = bairro
+        new_document["imovel"]["endereco"]["cidade"] = cidade
+        new_document["imovel"]["endereco"]["estado"] = estado
         new_document["imovel"]["endereco"]["numero"] = numero
         new_document["imovel"]["endereco"]["location"] = {}
         new_document["imovel"]["endereco"]["location"]["lat"] = latitude

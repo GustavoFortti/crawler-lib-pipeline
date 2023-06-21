@@ -20,13 +20,12 @@ class BulkLoad():
         # self.ps = PostgreSQL(env_config)
         self.fs = FileSystem(env_config)
 
-
     def start(self) -> None:
         """
         Executa o processo de carga em massa.
         Chama a função específica para o formato de arquivo configurado no job.
         """
-        file_format = self.job_config["bulkload"]['file-format']
+        file_format = self.job_config["bulkload"]["elastic"]["file-format"]
 
         save_options = {
             "json": self._load_json_to_elasticsearch

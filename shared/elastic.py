@@ -23,8 +23,6 @@ class Elastic():
         self.connection = None
         self.connect()
 
-        
-
     def connect(self):
         try:
             self.es = Elasticsearch(
@@ -105,7 +103,8 @@ class Elastic():
         ]
 
         if (not self.es.indices.exists(index=self.index_name)):
-            mapping = self.job_config["bulkload"]["mapping"]
+            mapping = self.job_config["bulkload"]["elastic"]["mapping"]
+            print(mapping)
             response = self.es.indices.create(index=self.index_name, body=mapping)
 
             if (not response["acknowledged"]):
