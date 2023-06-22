@@ -1,174 +1,196 @@
 {
     "settings": {
-        "analysis": {
-            "filter": {
-                "portuguese_stop": {
-                    "type": "stop",
-                    "stopwords": "_portuguese_"
-                },
-                "portuguese_keywords": {
-                    "type": "keyword_marker",
-                    "keywords": [
-                        "exemplo"
-                    ]
-                },
-                "portuguese_stemmer": {
-                    "type": "stemmer",
-                    "language": "portuguese"
-                },
-                "synonym_filter": {
-                    "type": "synonym_graph",
-                    "synonyms": [
-                        "terren => terren,lote,area"
-                    ]
-                }
-            },
-            "analyzer": {
-                "portuguese_analyzer": {
-                    "tokenizer": "standard",
-                    "filter": [
-                        "lowercase",
-                        "portuguese_stop",
-                        "portuguese_keywords",
-                        "portuguese_stemmer"
-                    ]
-                },
-                "synonym_analyzer": {
-                    "tokenizer": "standard",
-                    "filter": [
-                        "synonym_filter"
-                    ]
-                }
-            }
+      "analysis": {
+        "filter": {
+          "portuguese_stop": {
+            "type": "stop",
+            "stopwords": "_portuguese_"
+          },
+          "portuguese_keywords": {
+            "type": "keyword_marker",
+            "keywords": [
+              "exemplo"
+            ]
+          },
+          "portuguese_stemmer": {
+            "type": "stemmer",
+            "language": "portuguese"
+          },
+          "synonym_filter": {
+            "type": "synonym",
+            "synonyms": [
+              "terren => terren,lote,area"
+            ]
+          }
+        },
+        "analyzer": {
+          "portuguese_analyzer": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase",
+              "portuguese_stop",
+              "portuguese_keywords",
+              "portuguese_stemmer"
+            ]
+          },
+          "synonym_analyzer": {
+            "tokenizer": "standard",
+            "filter": [
+              "synonym_filter",
+              "lowercase",
+              "portuguese_stop",
+              "portuguese_keywords",
+              "portuguese_stemmer"
+            ]
+          }
         }
+      }
     },
     "mappings": {
-        "properties": {
-            "titulo": {
-                "type": "text",
-                "analyzer": "portuguese_analyzer",
-                "search_analyzer": "synonym_analyzer"
-            },
-            "codigo": {
-                "type": "keyword"
-            },
-            "descricao": {
-                "type": "text",
-                "analyzer": "portuguese_analyzer",
-                "search_analyzer": "synonym_analyzer"
-            },
-            "id": {
-                "type": "keyword"
-            },
-            "imovel": {
-                "properties": {
-                    "caracteristicas": {
-                        "properties": {
-                            "quartos": {
-                                "type": "text"
-                            },
-                            "banheiros": {
-                                "type": "text"
-                            },
-                            "suites": {
-                                "type": "text"
-                            },
-                            "vagas": {
-                                "type": "text"
-                            },
-                            "caracteristicas_adicionais": {
-                                "type": "text",
-                                "analyzer": "portuguese_analyzer",
-                                "search_analyzer": "synonym_analyzer",
-                                "fields": {
-                                    "original": {
-                                        "type": "keyword",
-                                        "index": true
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "endereco": {
-                        "properties": {
-                            "rua": {
-                                "type": "text",
-                                "analyzer": "portuguese_analyzer",
-                                "fields": {
-                                    "original": {
-                                        "type": "keyword",
-                                        "index": true
-                                    }
-                                }
-                            },
-                            "bairro": {
-                                "type": "text",
-                                "analyzer": "portuguese_analyzer",
-                                "fields": {
-                                    "original": {
-                                        "type": "keyword",
-                                        "index": true
-                                    }
-                                }
-                            },
-                            "cidade": {
-                                "type": "text",
-                                "analyzer": "portuguese_analyzer",
-                                "fields": {
-                                    "original": {
-                                        "type": "keyword",
-                                        "index": true
-                                    }
-                                }
-                            },
-                            "estado": {
-                                "type": "text",
-                                "analyzer": "portuguese_analyzer",
-                                "search_analyzer": "synonym_analyzer",
-                                "fields": {
-                                    "original": {
-                                        "type": "keyword",
-                                        "index": true
-                                    }
-                                }
-                            },
-                            "cep": {
-                                "type": "keyword"
-                            },
-                            "numero": {
-                                "type": "keyword"
-                            },
-                            "location": {
-                                "type": "geo_point"
-                            },
-                            "has_precision": {
-                                "type": "boolean"
-                            }
-                        }
-                    },
-                    "area": {
-                        "type": "text"
-                    },
-                    "unidade": {
-                        "type": "keyword"
-                    },
-                    "preco": {
-                        "type": "text"
-                    },
-                    "moeda": {
-                        "type": "keyword"
-                    },
-                    "valor_condominio": {
-                        "type": "text"
-                    },
-                    "valor_iptu": {
-                        "type": "text"
+      "properties": {
+        "titulo": {
+          "type": "text",
+          "analyzer": "portuguese_analyzer",
+          "search_analyzer": "synonym_analyzer"
+        },
+        "codigo": {
+          "type": "keyword"
+        },
+        "descricao": {
+          "type": "text",
+          "analyzer": "portuguese_analyzer",
+          "search_analyzer": "synonym_analyzer"
+        },
+        "full_text": {
+          "type": "text",
+          "analyzer": "portuguese_analyzer",
+          "search_analyzer": "synonym_analyzer"
+        },
+        "id": {
+          "type": "keyword"
+        },
+        "imovel": {
+          "properties": {
+            "caracteristicas": {
+              "properties": {
+                "quartos": {
+                  "type": "text"
+                },
+                "banheiros": {
+                  "type": "text"
+                },
+                "suites": {
+                  "type": "text"
+                },
+                "vagas": {
+                  "type": "text"
+                },
+                "caracteristicas_adicionais": {
+                  "type": "text",
+                  "analyzer": "portuguese_analyzer",
+                  "search_analyzer": "synonym_analyzer",
+                  "fields": {
+                    "original": {
+                      "type": "keyword",
+                      "index": true
                     }
+                  }
                 }
+              }
             },
-            "hash": {
-                "type": "keyword"
+            "endereco": {
+              "properties": {
+                "rua": {
+                  "type": "text",
+                  "analyzer": "portuguese_analyzer",
+                  "search_analyzer": "portuguese_analyzer",
+                  "fields": {
+                    "original": {
+                      "type": "keyword",
+                      "index": true
+                    }
+                  }
+                },
+                "bairro": {
+                  "type": "text",
+                  "analyzer": "portuguese_analyzer",
+                  "search_analyzer": "portuguese_analyzer",
+                  "fields": {
+                    "original": {
+                      "type": "keyword",
+                      "index": true
+                    }
+                  }
+                },
+                "cidade": {
+                  "type": "text",
+                  "analyzer": "portuguese_analyzer",
+                  "search_analyzer": "portuguese_analyzer",
+                  "fields": {
+                    "original": {
+                      "type": "keyword",
+                      "index": true
+                    }
+                  }
+                },
+                "estado": {
+                  "type": "text",
+                  "analyzer": "portuguese_analyzer",
+                  "search_analyzer": "synonym_analyzer",
+                  "fields": {
+                    "original": {
+                      "type": "keyword",
+                      "index": true
+                    }
+                  }
+                },
+                "cep": {
+                  "type": "keyword",
+                  "index": false
+                },
+                "numero": {
+                  "type": "keyword",
+                  "index": false
+                },
+                "location": {
+                  "type": "geo_point"
+                },
+                "has_precision": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "area": {
+              "type": "keyword",
+              "index": false
+            },
+            "unidade": {
+              "type": "keyword",
+              "index": false
+            },
+            "preco": {
+              "type": "keyword",
+              "index": false
+            },
+            "moeda": {
+              "type": "keyword",
+              "index": false
+            },
+            "valor_condominio": {
+              "type": "keyword",
+              "index": false
+            },
+            "valor_iptu": {
+              "type": "keyword",
+              "index": false
             }
+          }
+        },
+        "hash": {
+          "type": "keyword",
+          "index": false
         }
+      }
     }
-}
+  }
+  

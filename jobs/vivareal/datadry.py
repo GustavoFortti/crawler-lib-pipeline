@@ -29,19 +29,43 @@ class DataDry():
         """
         documents = self.fs.read_file(JOB_CONFIG['bulkload']["elastic"]["file-format"])
         for document in documents.values():
-            new_document = deepcopy(self.empty_document)
-            new_document = self._restructure_data(document, new_document)
-            new_document = self._set_location(document, new_document)
-            new_document["hash"] = create_hash_sha256(str(new_document))
-            
-            self.fs.save(new_document, "json", f"{self.name}_dry")
+            dry_document = deepcopy(self.empty_document)
+            dry_document = self._restructure_data(document, dry_document)
+            dry_document = self._set_location(document, dry_document)
+            dry_document = self._create_full_text_field(dry_document)
+            dry_document = self.create_hash_field(dry_document)
 
-    def _set_location(self, document: dict, new_document: dict) -> dict:
+            self.fs.save(dry_document, "json", f"{self.name}_dry")
+
+    def create_hash_field(self, dry_document: dict) -> dict:
+        new_document = deepcopy(dry_document)
+        new_document["hash"] = create_hash_sha256(str(new_document))
+
+        return new_document
+
+    def _create_full_text_field(self, dry_document: dict) -> dict:
+        new_document = deepcopy(dry_document)
+
+        document_text = ""
+        document_text += f"titulo {new_document['titulo']}, "
+        document_text += f"descricao {new_document['descricao']}, "
+        document_text += f"caracteristicas adicionais {new_document['imovel']['caracteristicas']['caracteristicas_adicionais']}, "
+        document_text += f"rua {new_document['imovel']['endereco']['rua']}, "
+        document_text += f"bairro {new_document['imovel']['endereco']['bairro']}, "
+        document_text += f"cidade {new_document['imovel']['endereco']['cidade']}, "
+        document_text += f"estado {new_document['imovel']['endereco']['estado']}"
+        new_document['full_text'] = document_text
+
+        return new_document
+        
+
+    def _set_location(self, document: dict, dry_document: dict) -> dict:
         """
         Define a localização (cep. numero. latitude e longitude) do imovel.
         :param document: O dicionário de dados.
         :return: O dicionário de dados atualizado.
         """
+        new_document = deepcopy(dry_document)
         endereco = document["endereco"]
     
         matches = re.findall(r"^(.*?),?\s*(\d+)?\s*[-,]?\s*([\w\s]+)?,?\s*(\w+)?\s*[-,]?\s*(\w+)?$", endereco)
@@ -77,13 +101,13 @@ class DataDry():
 
         return new_document
 
-    def _restructure_data(self, document: dict, new_document: dict) -> dict:
+    def _restructure_data(self, document: dict, dry_document: dict) -> dict:
         """
         Restrutura o dicionário de dados para um formato desejado.
         :param document: O dicionário de dados.
         :return: O dicionário de dados reestruturado.
         """
-        new_document = deepcopy(new_document)
+        new_document = deepcopy(dry_document)
         
         new_document["titulo"] = document["titulo"]
         new_document["codigo"] = document["codigo"]
