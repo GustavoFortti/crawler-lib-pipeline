@@ -21,7 +21,7 @@ Este arquivo contém as configurações para execução do job de extração de 
 import os
 import json
 
-job_name = "vivareal"
+job_name = "talks"
 pwd =  os.getcwd()
 local = f"{pwd}/project/jobs/{job_name}/"
 with open(f"{local}/mapping.json", "r") as f:
@@ -29,19 +29,11 @@ with open(f"{local}/mapping.json", "r") as f:
         
 JOB_CONFIG = {
     "sys": {
-        "local": local,
-        "storage-path": "/data-pipeline"
+        "local": local
     },
     "default": {
         "name": job_name,
-        "domain": "https://www.vivareal.com.br",
-        "index": {"key": "__index__", "range": []}
     },
-    "sets": [{
-        "id": 1,
-        "subject": "venda-sp-sorocaba",
-        "href": "/venda/sp/sorocaba/#onde=Brasil,S%C3%A3o%20Paulo,sorocaba,,,,,,BR%3ESao%20Paulo%3ENULL%3Esorocaba,,,&tipos=apartamento_residencial,casa_residencial"
-    }],
     "bulkload": {
         "elastic": {
             "file-format": "json",

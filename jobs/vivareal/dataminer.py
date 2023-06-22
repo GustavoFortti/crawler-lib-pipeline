@@ -19,10 +19,12 @@ class DataMiner():
         :param env_config: Dicionario contendo as configuracoes do ambiente.
         """
         self.env_config = env_config
+        self.job_name = self.env_config["job_name"]
         self.driver_type = self.env_config["driver"]
         self.driver_path = self.env_config['driver_path']
 
-        self.index = JOB_CONFIG['default']["name"]
+        self.dir_name = JOB_CONFIG['default']["name"]
+        self.storage_path = JOB_CONFIG["sys"]["storage-path"]
 
         self.fs = FileSystem(env_config)
 
@@ -51,7 +53,9 @@ class DataMiner():
             item_page['url'] = url
             item_page["id"] = encode_url_base64(item_page['codigo'])
 
-            self.fs.save(item_page, JOB_CONFIG['bulkload']["file-format"])
+            self.fs.save(data=item_page, 
+                         type_file=JOB_CONFIG['bulkload']["file-format"], 
+                         file_path=f"{self.storage_path}/{self.dir_name}/{self.job_name}")
 
             driver.quit()
 

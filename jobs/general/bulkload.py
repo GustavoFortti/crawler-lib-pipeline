@@ -13,8 +13,12 @@ class BulkLoad():
         :param env_config: Um dicionário contendo as configurações do ambiente.
         """
         self.job_name = env_config["job_name"]
+        
         job_confg_path = f"jobs.{self.job_name}.config"
         self.job_config = importlib.import_module(job_confg_path).JOB_CONFIG
+
+        self.dir_name = self.job_config['default']["name"]
+        self.storage_path = self.job_config["sys"]["storage-path"]
 
         self.es = Elastic(env_config, self.job_config)
         # self.ps = PostgreSQL(env_config)
@@ -40,7 +44,7 @@ class BulkLoad():
         O arquivo é lido e os documentos são indexados em massa no Elasticsearch.
         """
 
-        documents = self.fs.read_file(type_file="json", file_name=f"{self.job_name}_dry")
+        documents = self.fs.read_file(type_file="json", file_path=f"{self.storage_path}/{self.dir_name}/{self.job_name}_dry")
         
         self.es.bulkload(list(documents.values()))
 

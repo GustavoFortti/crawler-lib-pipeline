@@ -16,8 +16,10 @@ class DataDry():
         :param env_config: A configuração do ambiente.
         """
         self.env_config = env_config
+        self.job_name = env_config["job_name"]
 
-        self.name = JOB_CONFIG['default']["name"]
+        self.dir_name = JOB_CONFIG['default']["name"]
+        self.storage_path = JOB_CONFIG["sys"]["storage-path"]
         self.fs = FileSystem(env_config)
 
         properties = JOB_CONFIG["bulkload"]["elastic"]["mapping"]['mappings']['properties']
@@ -27,7 +29,8 @@ class DataDry():
         """
         Realiza o processo de limpeza dos dados.
         """
-        documents = self.fs.read_file(JOB_CONFIG['bulkload']["elastic"]["file-format"])
+        type_file = JOB_CONFIG['bulkload']["elastic"]["file-format"]
+        documents = self.fs.read_file(type_file=type_file, file_path=f"{self.storage_path}/{self.dir_name}/{self.job_name}")
         for document in documents.values():
             dry_document = deepcopy(self.empty_document)
             dry_document = self._restructure_data(document, dry_document)
@@ -35,7 +38,9 @@ class DataDry():
             dry_document = self._create_full_text_field(dry_document)
             dry_document = self.create_hash_field(dry_document)
 
-            self.fs.save(dry_document, "json", f"{self.name}_dry")
+            self.fs.save(data=dry_document, 
+                         type_file="json", 
+                         file_path=f"{self.storage_path}/{self.dir_name}/{self.job_name}_dry")
 
     def create_hash_field(self, dry_document: dict) -> dict:
         new_document = deepcopy(dry_document)
@@ -83,7 +88,7 @@ class DataDry():
             "state": estado,
         }
 
-        fl = FindLocation(self.env_config)
+        fl = FindLocation(self.env_config, JOB_CONFIG)
         fl.set_address(address)
 
         cep, has_precision = fl.get_cep()

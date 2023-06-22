@@ -6,7 +6,7 @@ from shared.filesystem import FileSystem
 from utils.dry_string import fix_if_string
 
 class FindLocation():
-    def __init__(self, env_config: dict) -> None:
+    def __init__(self, env_config: dict, job_config: dict) -> None:
         """
         Inicializa a classe FindLocation.
         :param env_config: A configuração do ambiente.
@@ -14,6 +14,8 @@ class FindLocation():
         self.env_config = env_config
         self.driver_type = self.env_config["driver"]
         self.driver_path = self.env_config['driver_path']
+
+        self.storage_path = job_config["sys"]["storage-path"]
 
         self.fs = FileSystem(env_config)
 
@@ -44,7 +46,7 @@ class FindLocation():
         :return: O CEP encontrado.
         """
         try:
-            self.df = self.fs.read_file(type_file="csv", file_name="cep-sp")
+            self.df = self.fs.read_file(type_file="csv", file_path=f"{self.storage_path}/cep/cep-sp")
 
             condition = ((self.df['bairro'].apply(fix_if_string) == fix_if_string(address["neighborhood"])) &
                         (self.df['cidade'].apply(fix_if_string) == fix_if_string(address["city"])) &
