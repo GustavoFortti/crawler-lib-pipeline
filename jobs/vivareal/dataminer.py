@@ -25,15 +25,16 @@ class DataMiner():
 
         self.dir_name = JOB_CONFIG['default']["name"]
         self.storage_path = JOB_CONFIG["sys"]["storage-path"]
-
+        self.file_format = JOB_CONFIG["bulkload"]["elastic"]["file-format"]
+        
         self.fs = FileSystem(env_config)
 
     def start(self) -> None:
         """
         Realiza a mineracao de dados.
         """
-        domain = JOB_CONFIG['default']["domain"]
         href = JOB_CONFIG['sets'][0]["href"]
+        domain = JOB_CONFIG['default']["domain"]
         url = f"{domain}{href}"
 
         driver = Selenium(self.driver_type, self.driver_path, True)
@@ -54,7 +55,7 @@ class DataMiner():
             item_page["id"] = encode_url_base64(item_page['codigo'])
 
             self.fs.save(data=item_page, 
-                         type_file=JOB_CONFIG['bulkload']["file-format"], 
+                         type_file=self.file_format, 
                          file_path=f"{self.storage_path}/{self.dir_name}/{self.job_name}")
 
             driver.quit()

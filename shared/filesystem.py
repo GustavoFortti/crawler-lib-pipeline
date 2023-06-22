@@ -31,7 +31,7 @@ class FileSystem():
         Salva os dados em um arquivo JSON.
         :param data: Os dados a serem salvos.
         """
-        file_path = f"{file_path}.json"
+        file_path = f"{self.sys_path}{file_path}.json"
 
         if not os.path.exists(file_path):
             with open(file_path, "w") as file:
@@ -69,7 +69,7 @@ class FileSystem():
         Lê o conteúdo de um arquivo CSV com o pandas.
         :return: O conteúdo do arquivo CSV lido.
         """
-        df = pandas.read_csv(f"{file_path}.csv")
+        df = pandas.read_csv(f"{self.sys_path}{file_path}.csv")
 
         return df
 
@@ -78,7 +78,7 @@ class FileSystem():
         Lê o conteúdo de um arquivo JSON.
         :return: O conteúdo do arquivo JSON lido.
         """
-        with open(f"{file_path}.json", "r") as f:
+        with open(f"{self.sys_path}{file_path}.json", "r") as f:
             json_data = json.load(f)
         
         return json_data
