@@ -73,7 +73,7 @@ class DataMiner():
                 elements.append(href)
 
         return list(set(elements))
-
+wsx 
     def _page_extract_itens(self, soup: object) -> dict:
         """
         Extrai os itens da pagina.
