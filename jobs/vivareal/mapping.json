@@ -73,6 +73,9 @@
           "properties": {
             "caracteristicas": {
               "properties": {
+                "tipo": {
+                  "type": "text"
+                },
                 "quartos": {
                   "type": "text"
                 },

@@ -20,11 +20,13 @@ class Selenium():
             chromedriver_path = driver_path
             opcoes = webdriver.ChromeOptions()
             if (headless): opcoes.add_argument('--headless')
-            self.driver = webdriver.Chrome(executable_path=chromedriver_path, options=opcoes)
+            self.driver = webdriver.Chrome(options=opcoes, executable_path=driver_path)
+
         elif (driver_type == "firefox"):
-            firefox_options = Options()
+            # firefox_options = Options()
             # firefox_options.add_argument("--headless")
-            self.driver = webdriver.Firefox(options=firefox_options)
+            # self.driver = webdriver.Firefox(options=firefox_options)
+            pass
         else:
             self.driver = None
 

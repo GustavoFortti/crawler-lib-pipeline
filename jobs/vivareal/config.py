@@ -30,7 +30,7 @@ with open(f"{local}/mapping.json", "r") as f:
 JOB_CONFIG = {
     "sys": {
         "local": local,
-        "storage-path": "/data-pipeline"
+        "storage-path": "/fs-data"
     },
     "default": {
         "name": job_name,
