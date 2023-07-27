@@ -3,7 +3,7 @@
 LOCAL=$(pwd)/project
 
 ENV="$1"
-source $LOCAL/config/env-$ENV.sh
+# source $LOCAL/config/env-$ENV.sh
 
 args=(
     "--env" "$ENV"

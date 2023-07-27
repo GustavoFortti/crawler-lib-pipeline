@@ -6,7 +6,7 @@ export ELASTIC_HOST="127.0.0.1"
 export ELASTIC_PORT="9200"
 export ELASTIC_USER="elastic"
 export ELASTIC_PASS=$(kubectl get secrets --namespace=default elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d)
-ELASTIC_TEST="timeout 1 curl -u \"$ELASTIC_USER:$ELASTIC_PASS\" -k \"https://localhost:my_port\" 2>/dev/null"
+ELASTIC_TEST="timeout 1 curl \"https://localhost:my_port\" 2>/dev/null"
 check_database_port "$ELASTIC_TEST" "ELASTIC" "$ELASTIC_PORT"
 
 # export POSTGRES_HOST=$(kubectl get service postgresql -n default -o jsonpath='{.spec.clusterIP}')

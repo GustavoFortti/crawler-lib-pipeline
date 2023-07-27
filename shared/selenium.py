@@ -2,10 +2,11 @@ import time
 import logging
 
 from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+
 
 from bs4 import BeautifulSoup
 
@@ -17,10 +18,17 @@ class Selenium():
         :param driver_path: O caminho para o arquivo do driver.
         """
         if (driver_type == "chrome"):
-            chromedriver_path = driver_path
-            opcoes = webdriver.ChromeOptions()
-            if (headless): opcoes.add_argument('--headless')
-            self.driver = webdriver.Chrome(options=opcoes, executable_path=driver_path)
+            options = webdriver.ChromeOptions()
+            options.add_argument('--headless')
+            options.add_argument('--disable-extensions')
+            options.add_argument('--disable-gpu')
+            options.add_argument('--disable-dev-shm-usage')
+            options.add_argument('--no-sandbox')
+            options.add_argument('--remote-debugging-port=3000')
+
+            service = Service(executable_path=driver_path)
+
+            self.driver = webdriver.Chrome(service=service, options=options)
 
         elif (driver_type == "firefox"):
             # firefox_options = Options()
