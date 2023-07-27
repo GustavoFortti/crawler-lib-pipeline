@@ -33,14 +33,32 @@ class DataMiner():
         """
         Realiza a mineracao de dados.
         """
+        self._page_loop_index()
+
+    def _page_loop_index(self):
         href = JOB_CONFIG['sets'][0]["href"]
         domain = JOB_CONFIG['default']["domain"]
         url = f"{domain}{href}"
 
         driver = Selenium(self.driver_type, self.driver_path, True)
-        soup = driver.get_html(url)
-        href_items = self._page_find_itens(soup)
+
+        flag = False
+        for i in range(1, 10):
+            if (flag):
+                button = (driver.run()).find_element("xpath", '//*[@id="js-site-main"]/div[2]/div[1]/section/div[2]/div[2]/div/ul/li[9]')
+                button.click()
+            else:
+                flag = True
+
+            print(i)
+            # soup = driver.get_html(url)
+            
+            # href_items = self._page_find_itens(soup)
+            # self._page_loop_items(href_items)
+
         driver.quit()
+
+    def _page_loop_items(href_items: list) -> None:
 
         for href in href_items:
             driver = Selenium(self.driver_type, self.driver_path, True)

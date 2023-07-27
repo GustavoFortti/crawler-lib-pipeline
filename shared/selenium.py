@@ -40,6 +40,11 @@ class Selenium():
 
         self.logger = logging.getLogger(__name__)
 
+    def run(self):
+        time.sleep(1)
+        WebDriverWait(self.driver, 20)
+        return self.driver
+
     def get_html(self, url: str) -> object:
         """
         Obtém o HTML de uma pagina.
